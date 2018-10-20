@@ -1,0 +1,48 @@
+import os
+import re
+from chardet.universaldetector import UniversalDetector
+
+dataHospitals = os.listdir(path=os.path.abspath("Данные для парсинга"));
+listSigns = [];
+numOfNones = 0;
+
+with open(os.path.abspath('Признаки.txt'), 'r', encoding='utf-8') as FileForSign:
+    listSigns = re.split(r'\n', FileForSign.read());
+
+for i in dataHospitals:
+    listForHospitals = os.listdir(path=os.path.abspath("Данные для парсинга/" + i));
+    for indexHospital in listForHospitals:
+
+
+        detector = UniversalDetector()
+        with open(os.path.abspath("Данные для парсинга/" + i + "/" + indexHospital), 'rb') as fileForEncoding:
+            for line in fileForEncoding:
+                detector.feed(line)
+                if detector.done:
+                    break
+            detector.close()
+
+
+        with open(os.path.abspath("Данные для парсинга/" + i + "/" + indexHospital), 'r', encoding = detector.result['encoding']) as inFile:
+            countOfLines = len((inFile).readlines());
+            print("______________________________________________________________________");
+            for indexSign in listSigns:
+                numOfNones = 0;
+                inFile.seek(0);
+                print("\nФайл: " + indexHospital + "    Поиск по признаку: " + indexSign);
+                for strMean in inFile:
+                    if re.search(indexSign, strMean) != None:
+                        if re.search('\t', strMean) != None:
+                            strMean = re.sub('\t', "  ", strMean);
+                        try:
+                            if bool(re.findall(indexSign + r'[\s\-впзр.]+([\d\.\-\s]+)', strMean)[0]):
+                                print(indexSign + "   " + str(re.findall(indexSign + r'[\s\-впзр.]+([\d\.\-\s]+)', strMean)[0]) + "   " + str(strMean.split('\n')));
+                        except IndexError:
+                            print("|" + str(strMean.split('\n')) + "|");
+                    else:
+                        numOfNones += 1;
+
+                    if countOfLines == numOfNones:
+                        print("Признак не обнаружен\n");
+
+
