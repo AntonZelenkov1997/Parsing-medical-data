@@ -35,8 +35,8 @@ for i in dataHospitals:
                         if re.search('\t', strMean) != None:
                             strMean = re.sub('\t', "  ", strMean);
                         try:
-                            if bool(re.findall(indexSign + r'[\s\-впзр.]+([\d\.\-\s]+)', strMean)[0]):
-                                print(indexSign + "   " + str(re.findall(indexSign + r'[\s\-впзр.]+([\d\.\-\s]+)', strMean)[0]) + "   " + str(strMean.split('\n')));
+                            if bool(re.findall(indexSign + r'[\s\-впзр.]+([\d\.\-]+)', strMean)[0]):
+                                print(indexSign + "   " + str(re.findall(indexSign + r'[\s\-впзр.]+([\d\.\-]+)', strMean)[0]) + "   " + str(strMean.split('\n')));
                         except IndexError:
                             print("|" + str(strMean.split('\n')) + "|");
                     else:
